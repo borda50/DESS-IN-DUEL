@@ -86,15 +86,22 @@
             document.getElementById("word").textContent = randomWord;
         }
         
+        function playSound(soundId) {
+            let sound = document.getElementById(soundId);
+            sound.pause();
+            sound.currentTime = 0;
+            sound.play();
+        }
+        
         document.getElementById("success").addEventListener("click", function() {
-            document.getElementById("win-sound").play();
+            playSound("win-sound");
             score++;
             document.getElementById("score").textContent = `Score : ${score}`;
             nextWord();
         });
         
         document.getElementById("pass").addEventListener("click", function() {
-            document.getElementById("lose-sound").play();
+            playSound("lose-sound");
             nextWord();
         });
         
@@ -112,3 +119,4 @@
     </script>
 </body>
 </html>
+
