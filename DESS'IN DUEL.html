@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mode Duel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .hidden { display: none; }
+        button {
+            font-size: 20px;
+            padding: 15px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        #start { background-color: #007bff; color: white; }
+        #success { background-color: #4CAF50; color: white; }
+        #pass { background-color: #DC3545; color: white; }
+        #restart { background-color: #007bff; color: white; }
+        #word { font-size: 32px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <audio id="win-sound" src="win.mp3"></audio>
+    <audio id="lose-sound" src="lose.mp3"></audio>
+    
+    <button id="start">▶️ LANCER</button>
+    <div id="game" class="hidden">
+        <h2 id="timer">200s</h2>
+        <h3 id="score">Score : 0</h3>
+        <h2 id="word"></h2>
+        <button id="success">✅ RÉUSSI</button>
+        <button id="pass">🔄 PASSER</button>
+    </div>
+    <div id="end-screen" class="hidden">
+        <h2 id="final-score"></h2>
+        <button id="restart">🔁 RECOMMENCER</button>
+    </div>
+    <script>
+        let timer;
+        let timeLeft = 200;
+        let score = 0;
+        let wordsUsed = new Set();
+        const words = ["Soleil", "Voiture", "Dragon", "Etoile", "Maison", "Astronaute", "Bateau", "Clé", "Piano", "Montagne", "Téléphone", "Banane", "Pyramide", "Cactus", "Arc-en-ciel", "Tigre", "Phare", "Hélicoptère", "Tour Eiffel", "Neige"];
+        
+        function startGame() {
+            document.getElementById("start").classList.add("hidden");
+            document.getElementById("game").classList.remove("hidden");
+            nextWord();
+            startTimer();
+        }
+        
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    document.getElementById("timer").textContent = timeLeft + "s";
+                } else {
+                    clearInterval(timer);
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        function nextWord() {
+            let availableWords = words.filter(word => !wordsUsed.has(word));
+            if (availableWords.length === 0) wordsUsed.clear();
+            let randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
+            wordsUsed.add(randomWord);
+            document.getElementById("word").textContent = randomWord;
+        }
+        
+        document.getElementById("success").addEventListener("click", function() {
+            document.getElementById("win-sound").play();
+            score++;
+            document.getElementById("score").textContent = `Score : ${score}`;
+            nextWord();
+        });
+        
+        document.getElementById("pass").addEventListener("click", function() {
+            document.getElementById("lose-sound").play();
+            nextWord();
+        });
+        
+        function endGame() {
+            document.getElementById("game").classList.add("hidden");
+            document.getElementById("end-screen").classList.remove("hidden");
+            document.getElementById("final-score").textContent = `SCORE FINAL : ${score}`;
+        }
+        
+        document.getElementById("restart").addEventListener("click", function() {
+            location.reload();
+        });
+        
+        document.getElementById("start").addEventListener("click", startGame);
+    </script>
+</body>
+</html>
